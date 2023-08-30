@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>보안 문자 챌린지</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      #captcha-container {
+        width: 250px;
+        height: 150px;
+        position: relative;
+      }
+      #captcha-text {
+        font-size: 60px;
+        font-weight: bold;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      #captcha-box {
+        width: 200px;
+        height: 50px;
+        position: absolute;
+        top: 80%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid black;
+      }
+      #captcha-input {
+        width: 194px;
+        height: 46px;
+        border: none;
+        font-size: 24px;
+        text-align: center;
+      }
+      #captcha-submit {
+        width: 100px;
+        height: 30px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>보안 문자 챌린지</h1>
+    <p>당신이 인간임을 증명하려면 다음 문제를 해결하십시오.</p>
+    <div id="captcha-container">
+      <div id="captcha-text">{{ code }}</div>
+    </div>
+    <form id="captcha-form" method="POST" action="{{ url_for('captcha') }}">
+      <div id="captcha-box">
+        <input id="captcha-input" type="text" placeholder="여기에 코드를 입력하세요" name="code" required>
+        <input type="hidden" name="web" value="{{ request.args.get('web') }}">
+        <br>
+        <button id="captcha-submit" type="submit">제출하다</button>
+      </div>
+    </form>
+    {% if error %}
+    <br>
+    <p id="captcha-message" style="color: red;">죄송합니다. 잘못되었습니다. 다시 시도해 주세요.</p>
+    {% endif %}
+    <script>
+      // Check if the user input matches the code
+      var captchaForm = document.getElementById('captcha-form');
+      captchaForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var captchaInput = document.getElementById('captcha-input');
+        var message = document.getElementById('captcha-message');
+        if (captchaInput.value == "{{ code }}") {
+          // Submit the form
+          captchaForm.submit();
+        } else {
+          message.innerText = '죄송합니다. 잘못되었습니다. 다시 시도해 주세요.';
+          message.style.color = 'red';
+          captchaInput.value = '';
+        }
+      });
+    </script>
+  </body>
+</html>
